@@ -1,0 +1,20 @@
+int chalkReplacer(int* chalk, int chalkSize, int k) {
+        // Calculate the total amount of chalk used in one round
+    long long totalChalk = 0;
+    for (int i = 0; i < chalkSize; i++) {
+        totalChalk += chalk[i];
+    }
+    
+    // Find the remaining chalk after full rounds
+    k %= totalChalk;
+    
+    // Find the student who will replace the chalk
+    for (int i = 0; i < chalkSize; i++) {
+        if (chalk[i] > k) {
+            return i;
+        }
+        k -= chalk[i];
+    }
+    
+    return -1;  // This line should never be reached
+}
