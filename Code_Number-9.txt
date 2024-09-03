@@ -1,0 +1,19 @@
+bool isPalindrome(int x) {
+    int n, i;
+    i = x;
+    n = 0;
+    if (i >= 0) {
+        while (i != 0) {
+            if (n>INT_MAX/10 || n<INT_MIN/10) return 0;
+            n = n * 10 + i % 10;
+            i = i / 10;
+        }
+        if (n == x) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
