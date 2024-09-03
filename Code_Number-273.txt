@@ -1,0 +1,54 @@
+const char *lessThan20[] = {"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", 
+                            "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", 
+                            "Eighteen", "Nineteen"};
+
+const char *tens[] = {"", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
+
+const char *thousands[] = {"", "Thousand", "Million", "Billion"};
+
+void helper(char *res, int num) {
+    if (num == 0) return;
+    if (num < 20) {
+        strcat(res, lessThan20[num]);
+        strcat(res, " ");
+    } else if (num < 100) {
+        strcat(res, tens[num / 10]);
+        strcat(res, " ");
+        helper(res, num % 10);
+    } else {
+        strcat(res, lessThan20[num / 100]);
+        strcat(res, " Hundred ");
+        helper(res, num % 100);
+    }
+}
+
+char* numberToWords(int num) {
+    if (num == 0) return strdup("Zero");
+
+    char *res = (char*)malloc(2048 * sizeof(char));
+    memset(res, 0, 2048);
+
+    int i = 0;
+    while (num > 0) {
+        if (num % 1000 != 0) {
+            char temp[512] = {0};
+            helper(temp, num % 1000);
+            if (thousands[i][0] != '\0') {
+                strcat(temp, thousands[i]);
+                strcat(temp, " ");
+            }
+            strcat(temp, res);
+            strcpy(res, temp);
+        }
+        num /= 1000;
+        i++;
+    }
+
+    // Remove trailing space
+    int len = strlen(res);
+    if (len > 0 && res[len - 1] == ' ') {
+        res[len - 1] = '\0';
+    }
+
+    return res;
+}
