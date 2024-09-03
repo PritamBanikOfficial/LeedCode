@@ -1,0 +1,55 @@
+char* intToRoman(int num) {
+    char* r;
+    r = (char*)malloc(20 * sizeof(char));
+    int i = 0;
+    while (num > 0) {
+        if (num >= 1000) {
+            r[i++] = 'M';
+            num -= 1000;
+        } else if (num >= 900) {
+            r[i++] = 'C';
+            r[i++] = 'M';
+            num -= 900;
+        } else if (num >= 500) {
+            r[i++] = 'D';
+            num -= 500;
+        } else if (num >= 400) {
+            r[i++] = 'C';
+            r[i++] = 'D';
+            num -= 400;
+        } else if (num >= 100) {
+            r[i++] = 'C';
+            num -= 100;
+        } else if (num >= 90) {
+            r[i++] = 'X';
+            r[i++] = 'C';
+            num -= 90;
+        } else if (num >= 50) {
+            r[i++] = 'L';
+            num -= 50;
+        } else if (num >= 40) {
+            r[i++] = 'X';
+            r[i++] = 'L';
+            num -= 40;
+        } else if (num >= 10) {
+            r[i++] = 'X';
+            num -= 10;
+        } else if (num >= 9) {
+            r[i++] = 'I';
+            r[i++] = 'X';
+            num -= 9;
+        } else if (num >= 5) {
+            r[i++] = 'V';
+            num -= 5;
+        } else if (num >= 4) {
+            r[i++] = 'I';
+            r[i++] = 'V';
+            num -= 4;
+        } else {
+            r[i++] = 'I';
+            num -= 1;
+        }
+    }
+    r[i] = '\0';
+    return r;
+}
