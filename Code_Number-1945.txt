@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <string.h>
+
+int getLucky(char* s, int k) {
+    int sum = 0;
+
+    // Step 1: Convert each character to its position and sum the digits
+    for (int i = 0; s[i] != '\0'; i++) {
+        int val = s[i] - 'a' + 1;
+        while (val > 0) {
+            sum += val % 10;
+            val /= 10;
+        }
+    }
+
+    // Step 2: Perform the sum of digits operation k times
+    while (k > 1) {
+        int newSum = 0;
+        while (sum > 0) {
+            newSum += sum % 10;
+            sum /= 10;
+        }
+        sum = newSum;
+        k--;
+    }
+
+    return sum;
+}
