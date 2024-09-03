@@ -1,0 +1,39 @@
+struct ListNode* mergeTwoLists(struct ListNode* list1, struct ListNode* list2) {
+    struct ListNode *c, *ptr;
+    c = NULL;
+    ptr = NULL;
+
+    while (list1 != NULL && list2 != NULL) {
+        if (list1->val <= list2->val) {
+            if (ptr == NULL) {
+                c = ptr = list1;
+            } else {
+                ptr->next = list1;
+                ptr = ptr->next;
+            }
+            list1 = list1->next;
+        } else {
+            if (ptr == NULL) {
+                c = ptr = list2;
+            } else {
+                ptr->next = list2;
+                ptr = ptr->next;
+            }
+            list2 = list2->next;
+        }
+    }
+    if (list1 != NULL) {
+        if (c == NULL) {
+            c = list1;
+        } else {
+            ptr->next = list1;
+        }
+    } else if (list2 != NULL) {
+        if (c == NULL) {
+            c = list2;
+        } else {
+            ptr->next = list2;
+        }
+    }
+    return c;
+}
