@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define HASH_SIZE 40001
+
+typedef struct Node {
+    int key;
+    struct Node* next;
+} Node;
+
+void addToHashSet(Node** hashSet, int key) {
+    int hashIndex = abs(key) % HASH_SIZE;
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->key = key;
+    newNode->next = hashSet[hashIndex];
+    hashSet[hashIndex] = newNode;
+}
+
+bool containsInHashSet(Node** hashSet, int key) {
+    int hashIndex = abs(key) % HASH_SIZE;
+    Node* currentNode = hashSet[hashIndex];
+    while (currentNode != NULL) {
+        if (currentNode->key == key) {
+            return true;
+        }
+        currentNode = currentNode->next;
+    }
+    return false;
+}
+
+void freeHashSet(Node** hashSet) {
+    for (int i = 0; i < HASH_SIZE; i++) {
+        Node* currentNode = hashSet[i];
+        while (currentNode != NULL) {
+            Node* temp = currentNode;
+            currentNode = currentNode->next;
+            free(temp);
+        }
+    }
+}
+
+int robotSim(int* commands, int commandsSize, int** obstacles, int obstaclesSize, int* obstaclesColSize) {
+    int dx[] = {0, 1, 0, -1};
+    int dy[] = {1, 0, -1, 0};
+    int x = 0, y = 0, di = 0;
+    int maxDist = 0;
+
+    Node* hashSet[HASH_SIZE] = {NULL};
+
+    for (int i = 0; i < obstaclesSize; i++) {
+        int ox = obstacles[i][0];
+        int oy = obstacles[i][1];
+        int hashKey = ox * 60001 + oy;
+        addToHashSet(hashSet, hashKey);
+    }
+
+    for (int i = 0; i < commandsSize; i++) {
+        if (commands[i] == -2) { // turn left
+            di = (di + 3) % 4;
+        } else if (commands[i] == -1) { // turn right
+            di = (di + 1) % 4;
+        } else { // move forward
+            for (int j = 0; j < commands[i]; j++) {
+                int nx = x + dx[di];
+                int ny = y + dy[di];
+                int hashKey = nx * 60001 + ny;
+                if (!containsInHashSet(hashSet, hashKey)) {
+                    x = nx;
+                    y = ny;
+                    maxDist = fmax(maxDist, x * x + y * y);
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
+    freeHashSet(hashSet);
+    return maxDist;
+}
