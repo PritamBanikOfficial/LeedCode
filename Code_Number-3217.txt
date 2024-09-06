@@ -1,0 +1,46 @@
+int findMax(int* nums, int numsSize) {
+    int max = -1;
+    for (int i = 0; i < numsSize; i++) {
+        if (nums[i] > max) {
+            max = nums[i];
+        }
+    }
+    return max;
+}
+
+struct ListNode* modifiedList(int* nums, int numsSize, struct ListNode* head) {
+    // Step 1: Find the maximum value in nums
+    int max = findMax(nums, numsSize);
+
+    // Step 2: Create a boolean array to mark presence of numbers from nums
+    bool* freq = (bool*)calloc(max + 1, sizeof(bool)); // Initialized with false (0)
+
+    for (int i = 0; i < numsSize; i++) {
+        freq[nums[i]] = true;  // Mark presence of each number in nums
+    }
+
+    // Step 3: Create a dummy node to build the new list
+    struct ListNode* temp = (struct ListNode*)malloc(sizeof(struct ListNode));
+    struct ListNode* current = temp;
+
+    // Step 4: Traverse the original linked list and skip nodes that are in nums
+    while (head != NULL) {
+        // If head->val is out of bounds or not in nums, add to new list
+        if (head->val > max || !freq[head->val]) {
+            current->next = head;
+            current = current->next;
+        }
+        head = head->next;
+    }
+
+    // Step 5: Terminate the new list
+    current->next = NULL;
+
+    // Step 6: Free the allocated frequency array
+    free(freq);
+
+    // Step 7: Return the new list (skipping the dummy node)
+    struct ListNode* result = temp->next;
+    free(temp);
+    return result;
+}
