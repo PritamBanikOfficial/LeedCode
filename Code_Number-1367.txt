@@ -1,0 +1,48 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+bool dfs(struct ListNode* head, struct TreeNode* root) {
+    if (!head) return true;    // If we reached the end of the linked list, it means we have a match
+    if (!root) return false;   // If tree node is null, and we haven't finished the linked list, return false
+    if (head->val != root->val) return false; // If the values don't match, return false
+    
+    // Continue to match the next node in the list with the left or right subtree
+    return dfs(head->next, root->left) || dfs(head->next, root->right);
+}
+
+// Main function to check if linked list is a subpath in the binary tree
+bool isSubPath(struct ListNode* head, struct TreeNode* root) {
+    if (!root) return false;   // If tree is empty, no match is possible
+    if (dfs(head, root)) return true;  // If there's a match starting from the current tree node, return true
+    
+    // Recursively check the left and right subtrees
+    return isSubPath(head, root->left) || isSubPath(head, root->right);
+}
+
+// Helper function to create new tree nodes
+struct TreeNode* newTreeNode(int val) {
+    struct TreeNode* node = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    node->val = val;
+    node->left = node->right = NULL;
+    return node;
+}
+
+// Helper function to create new linked list nodes
+struct ListNode* newListNode(int val) {
+    struct ListNode* node = (struct ListNode*)malloc(sizeof(struct ListNode));
+    node->val = val;
+    node->next = NULL;
+    return node;
+}
