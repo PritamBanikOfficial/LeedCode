@@ -1,0 +1,52 @@
+int list_len(struct ListNode* l) {
+    int len = 0;
+    while (l) {
+        len++;
+        l = l->next;
+    }
+    return len;
+}
+struct ListNode** splitListToParts(struct ListNode* head, int k, int* returnSize) {
+    struct ListNode* prev = NULL;
+    struct ListNode** ret = malloc(sizeof(struct ListNode*) * k);
+    *returnSize = k;
+    memset(ret, 0, sizeof(struct ListNode*) * k);
+    int i = 0, j = 0;
+    int len = list_len(head);
+    if (len == 0) {
+        /* memset(ret, 0, sizeof(struct ListNode*) * k); */
+        return ret;
+    }
+    if (k == 1) {
+        ret[i] = head;
+        return ret;
+    }
+    int r = len % k;
+    int q = len / k;
+    /* note when q < 1 */
+    /*
+    if (q < 1) {
+        while (head) {
+            ret[i] = head;
+            head = head->next;
+            ret[i]->next = NULL;
+            i++;
+        }
+        return ret;
+    }
+    */
+    while (head) {
+        ret[i] = head;
+        for (j = 0; j < q; ++j) {
+            prev = head;
+            head = head->next;
+        }
+        if (r-- > 0) {
+            prev = head;
+            head = head->next;
+        }
+        prev->next = NULL;
+        i++;
+    }
+    return ret;
+}
