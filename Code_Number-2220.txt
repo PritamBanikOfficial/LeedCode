@@ -1,0 +1,11 @@
+int minBitFlips(int start, int goal) {
+    int xor_result = start ^ goal;
+    int flips = 0;
+    
+    while (xor_result > 0) {
+        flips += xor_result & 1;  // Count the number of 1s in the xor result
+        xor_result >>= 1;         // Shift right to check the next bit
+    }
+    
+    return flips;
+}
