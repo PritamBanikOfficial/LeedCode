@@ -1,0 +1,46 @@
+int GCD(int a, int b)
+{
+    int big, small, temp;
+    if(a>b)
+    {
+        big = a;
+        small = b;
+    }
+    else if(a<b)
+    {
+        big = b;
+        small = a;
+    }
+    else return a;
+
+    while(true)
+    {
+        if(big % small == 0)return small;
+        temp = big;
+        big = small;
+        small = temp % small;
+    }
+    
+}
+struct ListNode* insertGreatestCommonDivisors(struct ListNode* head)
+{
+    int a, b, ans;
+    struct ListNode *p = head, *new;
+        if(head -> next == NULL)return head;
+        while(p -> next != NULL)
+        {
+            a = p -> val;
+            b = (p -> next) -> val;
+            ans = GCD(a,b);
+            new = (struct ListNode*)malloc(sizeof(struct ListNode));
+            new -> val = ans;
+
+            //inserting new node
+            new -> next = p -> next;
+            p -> next = new;
+
+            //update p
+            p = (p -> next) -> next;
+        }
+    return head;
+}
