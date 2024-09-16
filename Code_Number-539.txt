@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Helper function to convert "HH:MM" to minutes
+int timeToMinutes(char* time) {
+    int hours = (time[0] - '0') * 10 + (time[1] - '0'); // Extract hours
+    int minutes = (time[3] - '0') * 10 + (time[4] - '0'); // Extract minutes
+    return hours * 60 + minutes;
+}
+
+// Comparison function for sorting
+int compare(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int findMinDifference(char** timePoints, int timePointsSize) {
+    // If there are more time points than minutes in a day, there must be duplicates
+    if (timePointsSize > 1440) {
+        return 0;
+    }
+
+    // Array to store the time in minutes
+    int times[timePointsSize];
+
+    // Convert all time points to minutes
+    for (int i = 0; i < timePointsSize; i++) {
+        times[i] = timeToMinutes(timePoints[i]);
+    }
+
+    // Sort the times array
+    qsort(times, timePointsSize, sizeof(int), compare);
+
+    // Initialize minDiff with a large value
+    int minDiff = 1440;  // Max possible time difference in minutes
+
+    // Compute the difference between consecutive times
+    for (int i = 1; i < timePointsSize; i++) {
+        int diff = times[i] - times[i - 1];
+        if (diff < minDiff) {
+            minDiff = diff;
+        }
+    }
+
+    // Check the difference between the last and first time (across midnight)
+    int wrapAroundDiff = (1440 + times[0]) - times[timePointsSize - 1];
+    if (wrapAroundDiff < minDiff) {
+        minDiff = wrapAroundDiff;
+    }
+
+    return minDiff;
+}
