@@ -1,0 +1,75 @@
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
+int dp[51]; 
+
+int minExtra(char *s, char **dict, int dictSize, int idx)
+{
+    int min = INT_MAX, tmp;
+
+    if (s[idx] == 0) {
+        return 0;
+    }
+
+    if (dp[idx] != -1) {
+        return dp[idx];
+    }
+
+    /* Ignore current characer */
+    tmp = 1 + minExtra(s, dict, dictSize, idx + 1);
+    min = MIN(min, tmp);
+
+    /* Check if substring matches any word in dictionary */
+    for (int i = 0; i < dictSize; i++) {
+        int len = 0;
+
+        for (; s[idx + len] && dict[i][len]; len++) {
+            if (s[idx + len] != dict[i][len]) {
+                break;
+            }
+        }
+
+        if (dict[i][len] == 0) {
+            tmp = minExtra(s, dict, dictSize, idx + len);
+            min = MIN(min, tmp);
+        }
+    }
+
+    dp[idx] = min;
+
+    return min;
+}
+
+int minExtraChar(char * s, char ** dictionary, int dictionarySize){
+
+    /*
+     * Input:
+     *  *s
+     *  **dicionarry
+     *  dictionarySize
+     */
+
+    int ans;
+
+    /*
+     * Algorithm:
+     *  (1) Backtracking
+     *      During each process, decide whetehr to
+     *          (1-1) Ignore current charcter (means extra character + 1)
+     *          (1-2) Check if any word in dictionary equals s[idx] ... s[n]
+     *  (2) Using DP to speed up the process
+     */
+
+    for (int i = strlen(s) - 1; i >= 0; i--) {
+        dp[i] = -1;
+    }
+
+    ans = minExtra(s, dictionary, dictionarySize, 0);
+
+    /*
+     * Output:
+     *  Return the minimum number of extra characters left over if you 
+     *  break up s optimally.
+     */
+
+    return ans;
+}
