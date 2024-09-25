@@ -1,0 +1,70 @@
+typedef struct TrieNode {
+    struct TrieNode* children[26];
+    int prefixCount;
+} TrieNode;
+
+// Create a new Trie node
+TrieNode* createTrieNode() {
+    TrieNode* node = (TrieNode*)malloc(sizeof(TrieNode));
+    for (int i = 0; i < 26; i++) {
+        node->children[i] = NULL;
+    }
+    node->prefixCount = 0;
+    return node;
+}
+
+// Insert a word into the Trie and update prefix counts
+void insertTrie(TrieNode* root, char* word) {
+    TrieNode* current = root;
+    while (*word) {
+        int index = *word - 'a';
+        if (current->children[index] == NULL) {
+            current->children[index] = createTrieNode();
+        }
+        current = current->children[index];
+        current->prefixCount++;
+        word++;
+    }
+}
+
+// Calculate the prefix score for a word
+int calculatePrefixScore(TrieNode* root, char* word) {
+    TrieNode* current = root;
+    int score = 0;
+    while (*word) {
+        int index = *word - 'a';
+        current = current->children[index];
+        score += current->prefixCount;
+        word++;
+    }
+    return score;
+}
+
+// Main function to calculate prefix scores for all words
+int* sumPrefixScores(char** words, int wordsSize, int* returnSize) {
+    TrieNode* root = createTrieNode();
+    int* result = (int*)malloc(wordsSize * sizeof(int));
+    
+    // Insert all words into the Trie
+    for (int i = 0; i < wordsSize; i++) {
+        insertTrie(root, words[i]);
+    }
+    
+    // Calculate prefix scores for each word
+    for (int i = 0; i < wordsSize; i++) {
+        result[i] = calculatePrefixScore(root, words[i]);
+    }
+    
+    *returnSize = wordsSize;
+    return result;
+}
+
+// Helper function to free allocated memory for the Trie
+void freeTrie(TrieNode* root) {
+    for (int i = 0; i < 26; i++) {
+        if (root->children[i] != NULL) {
+            freeTrie(root->children[i]);
+        }
+    }
+    free(root);
+}
