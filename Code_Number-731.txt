@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int start;
+    int end;
+} Interval;
+
+typedef struct {
+    Interval* single;
+    int singleCount;
+    int singleCapacity;
+    Interval* doubleBooking;
+    int doubleCount;
+    int doubleCapacity;
+} MyCalendarTwo;
+
+MyCalendarTwo* myCalendarTwoCreate() {
+    MyCalendarTwo* obj = (MyCalendarTwo*)malloc(sizeof(MyCalendarTwo));
+    obj->single = (Interval*)malloc(10 * sizeof(Interval));
+    obj->singleCount = 0;
+    obj->singleCapacity = 10;
+    obj->doubleBooking = (Interval*)malloc(10 * sizeof(Interval));
+    obj->doubleCount = 0;
+    obj->doubleCapacity = 10;
+    return obj;
+}
+
+bool myCalendarTwoBook(MyCalendarTwo* obj, int start, int end) {
+    // Check for triple booking (intersection with doubleBooking)
+    for (int i = 0; i < obj->doubleCount; i++) {
+        if (start < obj->doubleBooking[i].end && end > obj->doubleBooking[i].start) {
+            return false;
+        }
+    }
+
+    // Check for double booking and store new double bookings
+    for (int i = 0; i < obj->singleCount; i++) {
+        if (start < obj->single[i].end && end > obj->single[i].start) {
+            int newStart = start > obj->single[i].start ? start : obj->single[i].start;
+            int newEnd = end < obj->single[i].end ? end : obj->single[i].end;
+            
+            if (obj->doubleCount == obj->doubleCapacity) {
+                obj->doubleCapacity *= 2;
+                obj->doubleBooking = (Interval*)realloc(obj->doubleBooking, obj->doubleCapacity * sizeof(Interval));
+            }
+            obj->doubleBooking[obj->doubleCount++] = (Interval){newStart, newEnd};
+        }
+    }
+
+    // Add the new booking to single bookings
+    if (obj->singleCount == obj->singleCapacity) {
+        obj->singleCapacity *= 2;
+        obj->single = (Interval*)realloc(obj->single, obj->singleCapacity * sizeof(Interval));
+    }
+    obj->single[obj->singleCount++] = (Interval){start, end};
+    
+    return true;
+}
+
+void myCalendarTwoFree(MyCalendarTwo* obj) {
+    free(obj->single);
+    free(obj->doubleBooking);
+    free(obj);
+}
