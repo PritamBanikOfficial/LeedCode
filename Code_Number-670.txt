@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <string.h>
+
+// Function to convert a number to a char array (string)
+void numToStr(int num, char* str) {
+    sprintf(str, "%d", num);
+}
+
+// Function to convert a char array (string) back to a number
+int strToNum(char* str) {
+    int num;
+    sscanf(str, "%d", &num);
+    return num;
+}
+
+// Function to swap two characters
+void swap(char* a, char* b) {
+    char temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int maximumSwap(int num) {
+    char str[12];
+    numToStr(num, str);
+    int len = strlen(str);
+
+    // Array to store the index of the largest digit from current to the rightmost
+    int last[10] = {0};
+    
+    // Fill the last appearance of each digit
+    for (int i = 0; i < len; i++) {
+        last[str[i] - '0'] = i;
+    }
+
+    // Try to find the first place to swap
+    for (int i = 0; i < len; i++) {
+        for (int d = 9; d > str[i] - '0'; d--) {
+            if (last[d] > i) {
+                swap(&str[i], &str[last[d]]);
+                return strToNum(str);
+            }
+        }
+    }
+
+    return num;
+}
