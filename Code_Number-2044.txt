@@ -1,0 +1,16 @@
+int countMaxOrSubsets(int* a, int n) {
+    int or = a[0], cnt = 0;
+    for (int i=1;i<n;i++) or |= a[i];
+    void subsets(int i, int candidate) {
+        if (candidate == or) {
+            cnt += (1 << (n - i)); 
+            return;
+        }
+        while (i<n) {
+            subsets(i + 1, candidate | a[i]);
+            i++;
+        } 
+    }
+    subsets(0, 0);
+    return cnt;
+}
