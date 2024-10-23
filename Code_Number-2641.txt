@@ -1,0 +1,78 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+int Deepth(struct TreeNode* root){
+    if(root==NULL) return 0;
+
+    int left=Deepth(root->left);
+    int right=Deepth(root->right);
+
+    return left>right?left+1:right+1;
+}
+struct TreeNode* replaceValueInTree(struct TreeNode* root) {
+    int level=Deepth(root);
+    long long* sum=(long long*)malloc(level*sizeof(long long));
+    memset(sum,0,level*sizeof(sum));
+    int size1=4;
+    int size2=4;
+    struct TreeNode** BFS=(struct TreeNode**)malloc(size1*sizeof(struct TreeNode*));
+    struct TreeNode** TMP=(struct TreeNode**)malloc(size2*sizeof(struct TreeNode*));
+    int top1=0;
+    int top2=-1;
+    if(root!=NULL){
+        BFS[0]=root;
+    } 
+    for(int i=0;i<level;i++){
+        while(top1!=-1){
+            struct TreeNode* tmp=BFS[top1];
+            if(top2+1>=size2){
+                size2*=2;
+                TMP=(struct TreeNode**)realloc(TMP, size2 * sizeof(struct TreeNode*));
+            }
+            if(tmp->left!=NULL) TMP[++top2]=tmp->left;
+            if(top2+1>=size2){
+                size2*=2;
+                TMP=(struct TreeNode**)realloc(TMP, size2 * sizeof(struct TreeNode*));
+            }
+            if(tmp->right!=NULL) TMP[++top2]=tmp->right;
+            top1--;
+            sum[i]+=(tmp->val);
+        }
+        while(top2!=-1){
+            if(top1+1>=size1){
+                size1*=2;
+                BFS=(struct TreeNode**)realloc(BFS, size1 * sizeof(struct TreeNode*));
+            }
+            BFS[++top1]=TMP[top2--];
+        }
+    }
+    root->val=0;
+    top1=0;
+    BFS[0]=root;
+    for(int i=1;i<level;i++){
+        while(top1!=-1){
+            int l=0,r=0;
+            printf("%d\n",BFS[top1]->val);
+            if(BFS[top1]->left!=NULL){
+                l=BFS[top1]->left->val;
+                TMP[++top2]=BFS[top1]->left;
+            }
+            if(BFS[top1]->right!=NULL){
+                r=BFS[top1]->right->val;
+                TMP[++top2]=BFS[top1]->right;
+            }
+            if( BFS[top1]->left!=NULL) BFS[top1]->left->val=sum[i]-l-r;
+            if( BFS[top1]->right!=NULL) BFS[top1]->right->val=sum[i]-l-r;
+            top1--;
+        }
+        while(top2!=-1){
+            BFS[++top1]=TMP[top2--];
+        }
+    }
+    return root;
+}
