@@ -1,0 +1,12 @@
+bool flipEquiv(struct TreeNode* root1, struct TreeNode* root2) {
+    // Base cases
+    if (root1 == NULL && root2 == NULL) return true;  // Both trees are empty
+    if (root1 == NULL || root2 == NULL) return false; // One tree is empty, the other is not
+    if (root1->val != root2->val) return false;       // Values of root nodes are different
+
+    // Recursively check both conditions (with flip and without flip)
+    bool no_flip = flipEquiv(root1->left, root2->left) && flipEquiv(root1->right, root2->right);
+    bool flip = flipEquiv(root1->left, root2->right) && flipEquiv(root1->right, root2->left);
+    
+    return no_flip || flip;  // Return true if either condition is satisfied
+}
