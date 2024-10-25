@@ -1,0 +1,29 @@
+int cmp(const void *a, const void *b) {
+    return strcmp(*(const char **)a, *(const char **)b);
+}
+
+char **removeSubfolders(char **folders, int foldersSize, int *returnSize) {
+    // Sort the folder array lexicographically
+    qsort(folders, foldersSize, sizeof(char *), cmp);
+
+    // Allocate memory for the result
+    char **result = (char **)malloc(foldersSize * sizeof(char *));
+    int idx = 0;  // To keep track of the number of non-subfolder results
+    
+    // Add the first folder as the initial parent folder
+    result[idx++] = folders[0];
+    
+    // Iterate through the sorted folders array
+    for (int i = 1; i < foldersSize; i++) {
+        int len = strlen(result[idx - 1]);
+        
+        // Check if the current folder is a sub-folder of the last added result
+        if (!(strncmp(folders[i], result[idx - 1], len) == 0 && folders[i][len] == '/')) {
+            result[idx++] = folders[i];
+        }
+    }
+    
+    // Set the return size
+    *returnSize = idx;
+    return result;
+}
